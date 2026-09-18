@@ -21,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="dashboard.css"
+        href="assets/css/dashboard.css"
     >
 
 </head>
@@ -209,7 +209,7 @@
                 </a>
 
 
-                <a href="index.php?page=advancesearch">
+                <a href="index.php?page=search">
                     Search
                 </a>
 

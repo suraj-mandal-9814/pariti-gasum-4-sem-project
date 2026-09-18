@@ -3,12 +3,12 @@
 $page = $_GET['page'] ?? 'dashboard';
 
 $routes = [
-    'dashboard'    => 'page/dashboard.php',
-    'edit'         => 'page/edit.php',
-    'suggestion'   => 'page/suggestion.php',
-    'search'       => 'page/search.php',
-    'messages'     => 'page/messages.php',
-    'notification' => 'page/notification.php',
+    'dashboard'    => 'pages/dashboard.php',
+    'edit'         => 'pages/edit.php',
+    'suggestion'   => 'pages/suggestion.php',
+    'search'       => 'pages/search.php',
+    'messages'     => 'pages/messages.php',
+    'notification' => 'pages/notification.php',
 ];
 
 
