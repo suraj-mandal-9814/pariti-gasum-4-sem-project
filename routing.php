@@ -3,12 +3,13 @@
 $page = $_GET['page'] ?? 'dashboard';
 
 $routes = [
-    'dashboard'    => 'pages/dashboard.php',
-    'edit'         => 'pages/edit.php',
-    'suggestion'   => 'pages/suggestion.php',
-    'search'       => 'pages/search.php',
-    'messages'     => 'pages/messages.php',
-    'notification' => 'pages/notification.php',
+    'dashboard'    => 'dashboard.php',
+    'edit'         => 'edit.php',
+    'suggestion'   => 'suggestion.php',
+    'search'       => 'api/search.php',
+    'messages'     => 'messages.php',
+    'notification' => 'notification.php',
+    'chat'         => 'api/chat.php',
 ];
 
 
@@ -33,4 +34,4 @@ if (!file_exists($content)) {
 
 
 // Load user dashboard layout
-require 'layout/userdashboard.php';
+require 'userdashboard.php';

@@ -4,7 +4,7 @@ session_start();
 $databaseHost = getenv('DB_HOST') ?: 'localhost';
 $databaseUser = getenv('DB_USER') ?: 'root';
 $databasePassword = getenv('DB_PASSWORD') ?: '';
-$databaseName = getenv('DB_NAME') ?: 'pirati_gasum';
+$databaseName = getenv('DB_NAME') ?: 'dating_website';
 
 $conn = mysqli_connect(
     $databaseHost,
@@ -20,8 +20,15 @@ if (!$conn) {
 
 mysqli_set_charset($conn, 'utf8mb4');
 
-$error = '';
+$error = isset($_GET['error']) && $_GET['error'] === 'invalid'
+    ? 'Invalid email or password.'
+    : '';
 $email = '';
+
+if (!empty($_SESSION['admin_id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -32,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $stmt = mysqli_prepare(
             $conn,
-            'SELECT id, name, email, password FROM users WHERE email = ? LIMIT 1'
+            'SELECT id, username, email, password FROM admins
+             WHERE email = ? LIMIT 1'
         );
 
         if (!$stmt) {
@@ -62,11 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             password_verify($password, $passwordHash)
         ) {
             session_regenerate_id(true);
-            $_SESSION['user_id'] = $userId;
-            $_SESSION['name'] = $userName;
-            $_SESSION['email'] = $userEmail;
+            $_SESSION['admin_id'] = $userId;
+            $_SESSION['admin_username'] = $userName;
+            $_SESSION['admin_email'] = $userEmail;
+            $_SESSION['role'] = 'admin';
 
-            header('Location: ../index.php?page=dashboard');
+            header('Location: dashboard.php');
             exit;
         }
 
@@ -80,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Pirati Gasum</title>
+    <title>Admin Login | Pirati Gasum</title>
 </head>
 <body>
-    <h2>User Login</h2>
+    <h2>Admin Login</h2>
 
     <?php if ($error !== ''): ?>
         <p role="alert" style="color: red;">
@@ -91,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     <?php endif; ?>
 
-    <form method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8') ?>">
+    <form method="post" action="adminlogin.php">
         <label for="email">Email:</label><br>
         <input
             type="email"

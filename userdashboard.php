@@ -1,3 +1,11 @@
+<?php
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$displayName = $_SESSION['username'] ?? 'Guest';
+?>
 <!doctype html>
 <html lang="en">
 
@@ -21,7 +29,7 @@
 
     <link
         rel="stylesheet"
-        href="assets/css/dashboard.css"
+        href="Frontend/assets/css/dashboard.css"
     >
 
 </head>
@@ -63,7 +71,7 @@
             </div>
 
             <div class="pname">
-                suraj mandal
+                <?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?>
             </div>
 
             <div class="psub">
@@ -168,12 +176,12 @@
 
         <div class="sidebar-footer">
 
-            <button
+            <a
                 class="logout"
-                type="button"
+                href="logout.php"
             >
                 Logout
-            </button>
+            </a>
 
         </div>
 

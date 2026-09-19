@@ -1,0 +1,78 @@
+:root {
+    --auth-primary: #8d3d58;
+    --auth-primary-dark: #6f2941;
+    --auth-text: #2c2024;
+    --auth-muted: #75686d;
+    --auth-border: #e5d9dd;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    color: var(--auth-text);
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #fff5f7 0%, #f6eef1 55%, #eadce1 100%);
+}
+
+.auth-wrapper { width: min(100%, 500px); }
+
+.auth-card,
+.logout-card {
+    padding: 36px;
+    border: 1px solid rgba(255, 255, 255, .8);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 16px 45px rgba(78, 32, 49, .14);
+}
+
+.auth-header { margin-bottom: 28px; text-align: center; }
+.auth-header h2 { margin: 0 0 8px; font-size: 1.8rem; }
+.auth-header p { margin: 0; color: var(--auth-muted); }
+.input-group { margin-bottom: 17px; }
+.input-label { display: block; margin-bottom: 7px; font-weight: 700; font-size: .9rem; }
+
+.input-control {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--auth-border);
+    border-radius: 9px;
+    outline: 0;
+    font: inherit;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.input-control:focus {
+    border-color: var(--auth-primary);
+    box-shadow: 0 0 0 3px rgba(141, 61, 88, .13);
+}
+
+.btn-primary {
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    background: var(--auth-primary);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+
+.btn-primary:hover { background: var(--auth-primary-dark); transform: translateY(-1px); }
+a { color: var(--auth-primary); font-weight: 700; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.password-toggle { position: absolute; right: 13px; top: 39px; color: var(--auth-muted); cursor: pointer; }
+.password-strength { height: 4px; margin-top: 8px; border-radius: 5px; overflow: hidden; background: #eee4e7; }
+.password-strength-bar { height: 100%; width: 0; background: var(--auth-primary); transition: width .2s; }
+.logout-card { width: min(100%, 410px); text-align: center; }
+.logout-card h1 { margin-top: 0; }
+.logout-card p { color: var(--auth-muted); }
+
+@media (max-width: 520px) {
+    body { padding: 15px; }
+    .auth-card, .logout-card { padding: 25px 20px; }
+}

@@ -4,7 +4,7 @@
 
         <h1>
             Hello,
-            <span>suraj mandal</span>!
+            <span><?= htmlspecialchars($_SESSION['username'] ?? 'Guest', ENT_QUOTES, 'UTF-8') ?></span>!
         </h1>
 
         <p>
