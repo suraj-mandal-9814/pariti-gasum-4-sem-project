@@ -12,7 +12,7 @@ function getDBConnection(): PDO
     }
 
     $host = getenv('DB_HOST') ?: 'localhost';
-    $name = getenv('DB_NAME') ?: 'dating_website';
+    $name = getenv('DB_NAME') ?: 'pirati ghasum';
     $user = getenv('DB_USER') ?: 'root';
     $password = getenv('DB_PASSWORD') ?: '';
 

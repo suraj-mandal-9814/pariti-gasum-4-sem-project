@@ -4,7 +4,7 @@ session_start();
 $databaseHost = getenv('DB_HOST') ?: 'localhost';
 $databaseUser = getenv('DB_USER') ?: 'root';
 $databasePassword = getenv('DB_PASSWORD') ?: '';
-$databaseName = getenv('DB_NAME') ?: 'dating_website';
+$databaseName = getenv('DB_NAME') ?: 'pirati ghasum';
 
 $conn = mysqli_connect(
     $databaseHost,
