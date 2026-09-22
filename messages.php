@@ -21,10 +21,10 @@ try {
     $db->exec('CREATE TABLE IF NOT EXISTS messages (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         sender_id INT NOT NULL,
-        recipient_id INT NOT NULL,
+        receiver_id INT NOT NULL,
         message TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX sender_recipient (sender_id, recipient_id)
+        INDEX sender_receiver (sender_id, receiver_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
     // List every active member except the logged-in user.
@@ -59,7 +59,7 @@ try {
                 $error = 'Please select a valid member.';
             } else {
                 $sendStatement = $db->prepare(
-                    'INSERT INTO messages (sender_id, recipient_id, message) VALUES (?, ?, ?)'
+                    'INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)'
                 );
                 $sendStatement->execute([$currentUserId, $selectedUserId, $text]);
                 // Keep the selected conversation open and load the new message below.
@@ -81,8 +81,8 @@ try {
             $historyStatement = $db->prepare(
                 'SELECT sender_id, message, created_at
                  FROM messages
-                 WHERE (sender_id = ? AND recipient_id = ?)
-                    OR (sender_id = ? AND recipient_id = ?)
+                 WHERE (sender_id = ? AND receiver_id = ?)
+                    OR (sender_id = ? AND receiver_id = ?)
                  ORDER BY created_at ASC, id ASC'
             );
             $historyStatement->execute([$currentUserId, $selectedUserId, $selectedUserId, $currentUserId]);
