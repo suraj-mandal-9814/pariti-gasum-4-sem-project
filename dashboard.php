@@ -17,10 +17,7 @@
 
     <div>
 
-        <a
-            href="index.php?page=suggestion"
-            class="btn-primary"
-        >
+        <a href="index.php?page=suggestion" class="btn-primary">
             Find Matches
         </a>
 

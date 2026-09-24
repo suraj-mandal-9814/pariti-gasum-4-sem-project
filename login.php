@@ -90,13 +90,15 @@ require_once 'includes/header.php';
         </div>
 
         <?php if (!empty($error)): ?>
-            <div style="background: rgba(244, 67, 54, 0.1); border-left: 4px solid #f44336; color: #d32f2f; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
+            <div
+                style="background: rgba(244, 67, 54, 0.1); border-left: 4px solid #f44336; color: #d32f2f; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
                 <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error); ?>
             </div>
         <?php endif; ?>
 
         <?php if (!empty($success)): ?>
-            <div style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; color: #2e7d32; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
+            <div
+                style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; color: #2e7d32; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
                 <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($success); ?>
             </div>
         <?php endif; ?>
@@ -104,13 +106,16 @@ require_once 'includes/header.php';
         <form action="login.php" method="POST">
             <div class="input-group">
                 <label class="input-label" for="username_email">Username or Email</label>
-                <input type="text" name="username_email" id="username_email" class="input-control" placeholder="eg:suraj01" required>
+                <input type="text" name="username_email" id="username_email" class="input-control"
+                    placeholder="eg:suraj01" required>
             </div>
 
             <div class="input-group" style="position: relative;">
                 <label class="input-label" for="password">Password</label>
-                <input type="password" name="password" id="password" class="input-control" placeholder="••••••••" required>
-                <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('password', this);" style="top: 43px;"></i>
+                <input type="password" name="password" id="password" class="input-control" placeholder="••••••••"
+                    required>
+                <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('password', this);"
+                    style="top: 43px;"></i>
             </div>
 
             <div style="text-align: right; margin-bottom: 20px;">

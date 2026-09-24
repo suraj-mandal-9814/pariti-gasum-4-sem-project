@@ -98,90 +98,113 @@ try {
 ?>
 
 <style>
-    .messages-page { 
-        max-width: 1100px; 
+    .messages-page {
+        max-width: 1100px;
         margin: 0 auto;
-     }
-    .messages-layout { 
-        display: grid; 
-        grid-template-columns: 280px 1fr; 
+    }
+
+    .messages-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
         gap: 20px;
-     }
-    .member-list, .chat-panel {
-         background: #fff;
-          border: 1px solid #eadfe2;
-          border-radius: 12px;
-           padding: 18px; }
+    }
+
+    .member-list,
+    .chat-panel {
+        background: #fff;
+        border: 1px solid #eadfe2;
+        border-radius: 12px;
+        padding: 18px;
+    }
+
     .member-link {
-         display: block;
-          padding: 12px;
-           margin: 8px 0;
-            border-radius: 8px;
-             color: #2c2024;
-              text-decoration: none;
-               background: #fbf7f8; }
-    .member-link:hover, .member-link.active {
-         background: #f0dfe5; 
-        }
-    .member-link small { 
-        color: #75686d;
-     }
-    .profile-summary {
-         padding-bottom: 14px;
-          border-bottom: 1px solid #eadfe2;
-         }
-    .chat-history { 
-        min-height: 260px;
-         max-height: 420px;
-          overflow-y: auto;
-           padding: 16px 0;
-         }
-    .message {
-         max-width: 75%;
-          padding: 10px 13px;
-           margin: 8px 0;
-            border-radius: 10px;
-             background: #f3eef0;
-             }
-    .message.mine {
-         margin-left: auto;
-          background: #8d3d58;
-           color: #fff;
-         }
-    .message small {
-         display: block;
-          margin-top: 5px;
-           opacity: .75;
-            font-size: .75rem;
-         }
-    .message-form {
-         display: flex;
-          gap: 10px;
-         }
-    .message-form textarea { 
-        flex: 1; 
-        min-height: 48px;
-         padding: 10px;
-          border: 1px solid #cfc1c5; 
-          border-radius: 8px;
-           font: inherit; 
-        }
-    .message-form button
-     { border: 0;
-      border-radius: 8px;
-       padding: 0 18px;
-        background: #8d3d58; 
-        color: #fff;
-         font-weight: 700;
-          cursor: pointer;
-         }
-    .notice { 
+        display: block;
         padding: 12px;
-         border-radius: 8px;
-          background: #fff3f3; 
-          color: #9f1d1d;
-         }
-    @media (max-width: 700px) { .messages-layout { grid-template-columns: 1fr; } }
+        margin: 8px 0;
+        border-radius: 8px;
+        color: #2c2024;
+        text-decoration: none;
+        background: #fbf7f8;
+    }
+
+    .member-link:hover,
+    .member-link.active {
+        background: #f0dfe5;
+    }
+
+    .member-link small {
+        color: #75686d;
+    }
+
+    .profile-summary {
+        padding-bottom: 14px;
+        border-bottom: 1px solid #eadfe2;
+    }
+
+    .chat-history {
+        min-height: 260px;
+        max-height: 420px;
+        overflow-y: auto;
+        padding: 16px 0;
+    }
+
+    .message {
+        max-width: 75%;
+        padding: 10px 13px;
+        margin: 8px 0;
+        border-radius: 10px;
+        background: #f3eef0;
+    }
+
+    .message.mine {
+        margin-left: auto;
+        background: #8d3d58;
+        color: #fff;
+    }
+
+    .message small {
+        display: block;
+        margin-top: 5px;
+        opacity: .75;
+        font-size: .75rem;
+    }
+
+    .message-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .message-form textarea {
+        flex: 1;
+        min-height: 48px;
+        padding: 10px;
+        border: 1px solid #cfc1c5;
+        border-radius: 8px;
+        font: inherit;
+    }
+
+    .message-form button {
+        border: 0;
+        border-radius: 8px;
+        padding: 0 18px;
+        background: #8d3d58;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .notice {
+        padding: 12px;
+        border-radius: 8px;
+        background: #fff3f3;
+        color: #9f1d1d;
+    }
+
+    @media (max-width: 700px) {
+        .messages-layout {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <main class="messages-page">
@@ -201,7 +224,7 @@ try {
 
             <?php foreach ($members as $member): ?>
                 <a class="member-link <?= (int) $member['id'] === $selectedUserId ? 'active' : '' ?>"
-                   href="index.php?page=messages&amp;user_id=<?= (int) $member['id'] ?>">
+                    href="index.php?page=messages&amp;user_id=<?= (int) $member['id'] ?>">
                     <strong><?= messageEscape($member['full_name'] ?: $member['username']) ?></strong><br>
                     <small><?= messageEscape($member['city'] ?: 'Location not added') ?></small>
                 </a>
@@ -237,7 +260,8 @@ try {
                     <?php endforeach; ?>
                 </div>
 
-                <form class="message-form" method="post" action="index.php?page=messages&amp;user_id=<?= (int) $selectedUserId ?>">
+                <form class="message-form" method="post"
+                    action="index.php?page=messages&amp;user_id=<?= (int) $selectedUserId ?>">
                     <input type="hidden" name="recipient_id" value="<?= (int) $selectedUserId ?>">
                     <textarea name="message" maxlength="1000" placeholder="Write a message..." required></textarea>
                     <button type="submit">Send</button>
