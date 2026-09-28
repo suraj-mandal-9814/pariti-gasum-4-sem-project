@@ -4,7 +4,20 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/config/db.php';
+
 $displayName = $_SESSION['username'] ?? 'Guest';
+$profilePicture = '';
+
+if (isset($_SESSION['user_id'])) {
+    $profileStatement = getDBConnection()->prepare(
+        'SELECT profile_pic FROM profiles WHERE user_id = ? LIMIT 1'
+    );
+    $profileStatement->execute([(int) $_SESSION['user_id']]);
+    $profilePicture = (string) ($profileStatement->fetchColumn() ?: '');
+}
+
+$avatarLetter = strtoupper(substr($displayName, 0, 1));
 ?>
 <!doctype html>
 <html lang="en">
@@ -29,7 +42,7 @@ $displayName = $_SESSION['username'] ?? 'Guest';
 
     <link
         rel="stylesheet"
-        href="Frontend/assets/css/dashboard.css"
+        href="Frontend/assets/css/dashboard.css?v=2"
     >
 
 </head>
@@ -67,7 +80,14 @@ $displayName = $_SESSION['username'] ?? 'Guest';
         <div class="profile">
 
             <div class="avatar">
-                S
+                <?php if ($profilePicture !== '' && $profilePicture !== 'default.png'): ?>
+                    <img
+                        src="uploads/profile/<?= htmlspecialchars(basename($profilePicture), ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?>'s profile picture"
+                    >
+                <?php else: ?>
+                    <?= htmlspecialchars($avatarLetter, ENT_QUOTES, 'UTF-8') ?>
+                <?php endif; ?>
             </div>
 
             <div class="pname">

@@ -8,7 +8,7 @@ $db = getDBConnection();
 
 $userStatement = $db->prepare(
     'SELECT u.username, u.email, p.full_name, p.age, p.gender, p.dob, p.country,
-            p.city, p.religion, p.bio
+            p.city, p.religion, p.bio, p.profile_pic
      FROM users u
      LEFT JOIN profiles p ON p.user_id = u.id
      WHERE u.id = ?'
@@ -40,6 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $password = (string) ($_POST['password'] ?? '');
     $age = filter_var($form['age'], FILTER_VALIDATE_INT);
+    $currentProfilePicture = (string) ($profile['profile_pic'] ?? 'default.png');
+    $newProfilePicture = null;
+    $uploadedProfilePicturePath = null;
 
     if (
         $form['username'] === '' || $form['email'] === '' || $form['full_name'] === '' ||
@@ -55,7 +58,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please select a valid gender.';
     } elseif ($password !== '' && strlen($password) < 6) {
         $error = 'A new password must be at least 6 characters.';
-    } else {
+    } elseif (
+        isset($_FILES['profile_pic']) &&
+        $_FILES['profile_pic']['error'] !== UPLOAD_ERR_NO_FILE &&
+        $_FILES['profile_pic']['error'] !== UPLOAD_ERR_OK
+    ) {
+        $error = 'The profile picture could not be uploaded.';
+    } elseif (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+        $image = $_FILES['profile_pic'];
+        $maxImageSize = 5 * 1024 * 1024;
+        $imageInfo = @getimagesize($image['tmp_name']);
+        $allowedImageTypes = [
+            IMAGETYPE_JPEG => 'jpg',
+            IMAGETYPE_PNG => 'png',
+            IMAGETYPE_WEBP => 'webp',
+        ];
+
+        if ($image['size'] > $maxImageSize || $imageInfo === false) {
+            $error = 'Profile pictures must be a valid image smaller than 5 MB.';
+        } elseif (!isset($allowedImageTypes[$imageInfo[2]])) {
+            $error = 'Only JPG, PNG, and WebP profile pictures are allowed.';
+        } else {
+            $uploadDirectory = __DIR__ . '/uploads/profile';
+            if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true)) {
+                $error = 'The profile picture upload directory is unavailable.';
+            } else {
+                $newProfilePicture = bin2hex(random_bytes(16)) . '.' . $allowedImageTypes[$imageInfo[2]];
+                $uploadedProfilePicturePath = $uploadDirectory . '/' . $newProfilePicture;
+                if (!move_uploaded_file($image['tmp_name'], $uploadedProfilePicturePath)) {
+                    $error = 'The profile picture could not be saved.';
+                    $uploadedProfilePicturePath = null;
+                    $newProfilePicture = null;
+                }
+            }
+        }
+    }
+
+    if ($error === '') {
         try {
             $duplicateStatement = $db->prepare(
                 'SELECT id FROM users
@@ -65,6 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $duplicateStatement->execute([$form['username'], $form['email'], $userId]);
 
             if ($duplicateStatement->fetch()) {
+                if ($uploadedProfilePicturePath !== null && is_file($uploadedProfilePicturePath)) {
+                    unlink($uploadedProfilePicturePath);
+                }
                 $error = 'That username or email is already in use.';
             } else {
                 $db->beginTransaction();
@@ -91,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $profileUpdate = $db->prepare(
                         'UPDATE profiles
                          SET full_name = ?, age = ?, gender = ?, dob = ?, country = ?, city = ?,
-                             religion = ?, bio = ?
+                             religion = ?, bio = ?, profile_pic = COALESCE(?, profile_pic)
                          WHERE user_id = ?'
                     );
                     $profileUpdate->execute([
@@ -103,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $form['city'],
                         $form['religion'] !== '' ? $form['religion'] : null,
                         $form['bio'] !== '' ? $form['bio'] : null,
+                        $newProfilePicture,
                         $userId,
                     ]);
                 } else {
@@ -121,17 +164,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $form['city'],
                         $form['religion'] !== '' ? $form['religion'] : null,
                         $form['bio'] !== '' ? $form['bio'] : null,
-                        'default.png',
+                        $newProfilePicture ?? 'default.png',
                     ]);
                 }
 
                 $db->commit();
+                if ($newProfilePicture !== null && $currentProfilePicture !== '' && $currentProfilePicture !== 'default.png') {
+                    $oldProfilePicturePath = __DIR__ . '/uploads/profile/' . basename($currentProfilePicture);
+                    if (is_file($oldProfilePicturePath)) {
+                        unlink($oldProfilePicturePath);
+                    }
+                }
+                $profile['profile_pic'] = $newProfilePicture ?? $currentProfilePicture;
                 $_SESSION['username'] = $form['username'];
                 $success = 'Your profile has been updated.';
             }
         } catch (PDOException $exception) {
             if ($db->inTransaction()) {
                 $db->rollBack();
+            }
+            if ($uploadedProfilePicturePath !== null && is_file($uploadedProfilePicturePath)) {
+                unlink($uploadedProfilePicturePath);
             }
             $error = 'Unable to update your profile right now.';
         }
@@ -188,6 +241,17 @@ function editEscape(string $value): string
         resize: vertical;
     }
 
+    .profile-picture-preview {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+        margin-bottom: 10px;
+        border: 4px solid #fff0f4;
+        background: #fff0f4;
+    }
+
     .edit-profile-form button {
         border: 0;
         cursor: pointer;
@@ -232,7 +296,21 @@ function editEscape(string $value): string
         <div class="edit-message edit-success"><?= editEscape($success) ?></div>
     <?php endif; ?>
 
-    <form class="edit-profile-form" method="post" action="index.php?page=edit">
+    <form class="edit-profile-form" method="post" action="index.php?page=edit" enctype="multipart/form-data">
+        <div class="full-width">
+            <label for="profile_pic">Profile picture</label>
+            <?php if (!empty($profile['profile_pic']) && $profile['profile_pic'] !== 'default.png'): ?>
+                <img
+                    class="profile-picture-preview"
+                    src="uploads/profile/<?= editEscape(basename($profile['profile_pic'])) ?>"
+                    alt="Current profile picture"
+                >
+            <?php endif; ?>
+            <input type="file" id="profile_pic" name="profile_pic"
+                accept="image/jpeg,image/png,image/webp">
+            <small>JPG, PNG, or WebP only. Maximum size: 5 MB.</small>
+        </div>
+
         <div>
             <label for="full_name">Full name</label>
             <input id="full_name" name="full_name" value="<?= editEscape($form['full_name']) ?>" required>
