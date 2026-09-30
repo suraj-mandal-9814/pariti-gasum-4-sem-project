@@ -93,6 +93,13 @@ function suggestionEscape(string $value): string
         font-weight: 700;
     }
 
+    .suggestion-profile-link {
+        display: block;
+        width: fit-content;
+        margin: 0 auto;
+        text-decoration: none;
+    }
+
     .suggestion-avatar img {
         width: 100%;
         height: 100%;
@@ -103,6 +110,17 @@ function suggestionEscape(string $value): string
         margin: 0;
         text-align: center;
         font-size: 19px;
+    }
+
+    .suggestion-card h2 a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .suggestion-card h2 a:hover,
+    .suggestion-card h2 a:focus-visible {
+        color: #8d3d58;
+        text-decoration: underline;
     }
 
     .suggestion-meta {
@@ -129,6 +147,12 @@ function suggestionEscape(string $value): string
         font-weight: 700;
         text-align: center;
         text-decoration: none;
+    }
+
+    .suggestion-action--profile {
+        border: 1px solid #8d3d58;
+        background: #fff;
+        color: #8d3d58;
     }
 
     .suggestions-empty {
@@ -167,17 +191,23 @@ function suggestionEscape(string $value): string
                 ]));
                 ?>
                 <article class="suggestion-card">
-                    <div class="suggestion-avatar">
-                        <?php if ($profilePicture !== '' && $profilePicture !== 'default.png'): ?>
-                            <img
-                                src="uploads/profile/<?= suggestionEscape(basename($profilePicture)) ?>"
-                                alt="<?= suggestionEscape($displayName) ?>'s profile picture"
-                            >
-                        <?php else: ?>
-                            <?= suggestionEscape(strtoupper(substr($displayName, 0, 1))) ?>
-                        <?php endif; ?>
-                    </div>
-                    <h2><?= suggestionEscape($displayName) ?></h2>
+                    <a class="suggestion-profile-link"
+                        href="index.php?page=viewprofile&amp;id=<?= (int) $suggestion['id'] ?>"
+                        aria-label="View <?= suggestionEscape($displayName) ?>'s profile">
+                        <div class="suggestion-avatar">
+                            <?php if ($profilePicture !== '' && $profilePicture !== 'default.png'): ?>
+                                <img
+                                    src="uploads/profile/<?= suggestionEscape(basename($profilePicture)) ?>"
+                                    alt="<?= suggestionEscape($displayName) ?>'s profile picture"
+                                >
+                            <?php else: ?>
+                                <?= suggestionEscape(strtoupper(substr($displayName, 0, 1))) ?>
+                            <?php endif; ?>
+                        </div>
+                    </a>
+                    <h2><a href="index.php?page=viewprofile&amp;id=<?= (int) $suggestion['id'] ?>">
+                        <?= suggestionEscape($displayName) ?>
+                    </a></h2>
                     <p class="suggestion-meta">
                         <?php if (!empty($suggestion['age'])): ?>
                             <?= (int) $suggestion['age'] ?> years old
@@ -188,10 +218,10 @@ function suggestionEscape(string $value): string
                     <p class="suggestion-bio">
                         <?= suggestionEscape((string) ($suggestion['bio'] ?: 'Say hello and get to know each other.')) ?>
                     </p>
-                    <a
-                        class="suggestion-action"
-                        href="index.php?page=messages&amp;user_id=<?= (int) $suggestion['id'] ?>"
-                    >Say hello</a>
+                    <a class="suggestion-action suggestion-action--profile"
+                        href="index.php?page=viewprofile&amp;id=<?= (int) $suggestion['id'] ?>">View profile</a>
+                    <a class="suggestion-action"
+                        href="index.php?page=messages&amp;user_id=<?= (int) $suggestion['id'] ?>">Say hello</a>
                 </article>
             <?php endforeach; ?>
         </div>

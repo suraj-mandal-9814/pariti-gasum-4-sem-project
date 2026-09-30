@@ -7,6 +7,7 @@ $routes = [
     'edit'         => 'edit.php',
     'suggestion'   => 'suggestion.php',
     'search'       => 'api/search.php',
+    'viewprofile'  => 'viewprofile.php',
     'messages'     => 'messages.php',
     'notification' => 'notification.php',
     'chat'         => 'api/chat.php',

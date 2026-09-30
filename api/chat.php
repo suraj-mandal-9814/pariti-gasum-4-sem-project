@@ -42,12 +42,46 @@ function chatEscape(string $text): string
 ?>
 
 <style>
-    .chat-box { max-width: 650px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; }
-    .chat-message { margin: 10px 0; padding: 10px; background: #f3eef0; border-radius: 8px; }
-    .chat-message small { color: #666; }
-    .chat-form { display: flex; gap: 10px; margin-top: 15px; }
-    .chat-form input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
-    .chat-form button { padding: 10px 16px; border: 0; border-radius: 6px; background: #8d3d58; color: white; cursor: pointer; }
+    .chat-box {
+        max-width: 650px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .chat-message {
+        margin: 10px 0;
+        padding: 10px;
+        background: #f3eef0;
+        border-radius: 8px;
+    }
+
+    .chat-message small {
+        color: #666;
+    }
+
+    .chat-form {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .chat-form input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .chat-form button {
+        padding: 10px 16px;
+        border: 0;
+        border-radius: 6px;
+        background: #8d3d58;
+        color: white;
+        cursor: pointer;
+    }
 </style>
 
 <section class="chat-box">

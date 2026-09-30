@@ -5,14 +5,49 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// If already logged in, redirect to appropriate dashboard
-if (isset($_SESSION['admin_id'])) {
-    header('Location: admin/dashboard.php');
-    exit;
+// If session already exists, validate it against the database so stale sessions don't auto-redirect.
+$db = null;
+try {
+    $db = getDBConnection();
+} catch (Exception $e) {
+    // If DB not available, we'll fall back to basic session checks below.
 }
+
+// Admin session validation
+if (isset($_SESSION['admin_id'])) {
+    $validAdmin = false;
+    if ($db) {
+        $stmt = $db->prepare('SELECT id FROM admins WHERE id = ? LIMIT 1');
+        $stmt->execute([(int) $_SESSION['admin_id']]);
+        if ($stmt->fetch()) {
+            $validAdmin = true;
+        }
+    }
+    if ($validAdmin) {
+        header('Location: admin/dashboard.php');
+        exit;
+    } else {
+        unset($_SESSION['admin_id'], $_SESSION['admin_username'], $_SESSION['user_role']);
+    }
+}
+
+// User session validation
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php?page=dashboard');
-    exit;
+    $validUser = false;
+    if ($db) {
+        $stmt = $db->prepare('SELECT id, status FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([(int) $_SESSION['user_id']]);
+        $row = $stmt->fetch();
+        if ($row && (($row['status'] ?? '') !== 'suspended')) {
+            $validUser = true;
+        }
+    }
+    if ($validUser) {
+        header('Location: index.php?page=dashboard');
+        exit;
+    } else {
+        unset($_SESSION['user_id'], $_SESSION['username'], $_SESSION['user_role']);
+    }
 }
 
 $error = '';
